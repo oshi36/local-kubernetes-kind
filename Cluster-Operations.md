@@ -23,6 +23,30 @@ nodes:
 kind create cluster --config kind-config.yaml --name kind-multi-node
 ```
 This will create a **kind-multi-node** Kubernetes cluster with one control plane and two worker nodes.
+- Create a cluster with the following configuration file if ingress is being used.
+```
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  kubeadmConfigPatches:
+  - |
+    kind: InitConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "ingress-ready=true"
+  extraPortMappings:
+  - containerPort: 80
+    hostPort: 80
+    protocol: TCP
+  - containerPort: 443
+    hostPort: 443
+    protocol: TCP
+```
+```
+kind create cluster --config=cluster-for-ingress.yaml --name ingress-cluster
+```
+
 ## Access Cluster
 - Get all the kind clusters
 ```
